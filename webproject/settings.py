@@ -25,7 +25,29 @@ SECRET_KEY = 'd4bwc30w_6m*mg2(u*b$6!!4bv_1$zdrjt=(hubmr#8gdy&a9v'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+REST_USE_JWT = True
+
 ALLOWED_HOSTS = []
+
+import datetime
+
+#your other code here
+
+JWT_AUTH = {
+    # If the secret is wrong, it will raise a jwt.DecodeError telling you as such. You can still get at the payload by setting the JWT_VERIFY to False.
+    'JWT_VERIFY': True,
+
+    # You can turn off expiration time verification by setting JWT_VERIFY_EXPIRATION to False.
+    # If set to False, JWTs will last forever meaning a leaked token could be used by an attacker indefinitely.
+    'JWT_VERIFY_EXPIRATION': True,
+
+    # This is an instance of Python's datetime.timedelta. This will be added to datetime.utcnow() to set the expiration time.
+    # Default is datetime.timedelta(seconds=300)(5 minutes).
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1),
+
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+}
 
 
 # Application definition
@@ -37,6 +59,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'webapp',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+   
 ]
 
 MIDDLEWARE = [
@@ -62,6 +89,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                
             ],
         },
     },
@@ -75,11 +103,13 @@ WSGI_APPLICATION = 'webproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'my_api_db', 
+        'USER': 'florence',
+        'PASSWORD': 'admin',
+       
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -117,4 +147,26 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+os.path.join(BASE_DIR, 'static'),
+)
+# configuring the location for media
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTH_USER_MODEL = 'webapp.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication', 
+        'rest_framework.authentication.BasicAuthentication',    
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated' 
+    ],
+}
