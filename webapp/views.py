@@ -9,7 +9,6 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
 class customerList(APIView):
-
     def get(self, response):
         customer1 = customer.objects.all()
         serializer = customerSerializer(customer1, many=true)

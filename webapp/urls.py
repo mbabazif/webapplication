@@ -2,10 +2,14 @@ from django.urls import path
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
+from webapp import views
+from . import views
+from .views import *
 
 
 
 urlpatterns = [
-    path(r'^customer/', customerList.as_view()),
+    url(r'^customer/',views.customerList, name='list'),
+    
    
 ]
