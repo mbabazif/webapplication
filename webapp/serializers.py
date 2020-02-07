@@ -1,41 +1,42 @@
 from rest_framework import serializers
-from webapp.models import User, UserProfile
+from webapp.models import customer
 
-class UserProfileSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = UserProfile
-        fields = ('title', 'dob', 'address', 'country')
-
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    profile = UserProfileSerializer(required=True)
+class customerSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = User
-        fields = ('url', 'email', 'first_name', 'last_name', 'password', 'profile')
-        extra_kwargs = {'password': {'write_only': True}}
+        model = customer
+        # fields = ('first_name', 'second_name', 'number', 'location')
+        fields ='__all__'
 
-    def create(self, validated_data):
-        profile_data = validated_data.pop('profile')
-        password = validated_data.pop('password')
-        user = User(**validated_data)
-        user.set_password(password)
-        user.save()
-        UserProfile.objects.create(user=user, **profile_data)
-        return user
+# class UserSerializer(serializers.HyperlinkedModelSerializer):
+#     profile = UserProfileSerializer(required=True)
 
-    def update(self, instance, validated_data):
-        profile_data = validated_data.pop('profile')
-        profile = instance.profile
+#     class Meta:
+#         model = User
+#         fields = ('url', 'email', 'first_name', 'last_name', 'password', 'profile')
+#         extra_kwargs = {'password': {'write_only': True}}
 
-        instance.email = validated_data.get('email', instance.email)
-        instance.save()
+#     def create(self, validated_data):
+#         profile_data = validated_data.pop('profile')
+#         password = validated_data.pop('password')
+#         user = User(**validated_data)
+#         user.set_password(password)
+#         user.save()
+#         UserProfile.objects.create(user=user, **profile_data)
+#         return user
 
-        profile.title = profile_data.get('title', profile.title)
-        profile.dob = profile_data.get('dob', profile.dob)
-        profile.address = profile_data.get('address', profile.address)
-        profile.country = profile_data.get('country', profile.country)
+#     def update(self, instance, validated_data):
+#         profile_data = validated_data.pop('profile')
+#         profile = instance.profile
+
+#         instance.email = validated_data.get('email', instance.email)
+#         instance.save()
+
+#         profile.title = profile_data.get('title', profile.title)
+#         profile.dob = profile_data.get('dob', profile.dob)
+#         profile.address = profile_data.get('address', profile.address)
+#         profile.country = profile_data.get('country', profile.country)
         
-        profile.save()
+#         profile.save()
 
-        return instance
+#         return instance
